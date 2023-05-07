@@ -1,0 +1,51 @@
+:host
+{ mat-card {
+  margin: 2em auto;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+mat-toolbar-row {
+  justify-content: space-between;
+}
+
+mat-sidenav {
+  width: 200px;
+}
+
+.done {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  color: white;
+}
+
+.pills {
+  border: 1px solid;
+ border-color:rgb(20, 154, 237);
+ color:rgb(20, 154, 237);;
+
+}
+
+.app-form {
+
+  width: 100%;
+  display: flex;
+}
+
+.form-full-width {
+  width: 80%;
+}
+
+.table-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 500px;
+  min-width: 300px;
+  overflow: auto;
+}
+
+
+
+}
