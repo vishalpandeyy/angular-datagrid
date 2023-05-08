@@ -32,3 +32,10 @@ Creating dynamic filter predicate for different filters and synchronising it to 
 - JSON to TS to create Country model, where we can copy json on clipboard and that vs code extension can generate interface for the json. 
 - vs code debugger for chrome - for debugging.
 - Quokka.js for js playground - working off js array manipulation and logic building.
+
+
+## Improvements
+
+- would have preffered to develop it using storybook.
+- didn't get time to write unit tests 
+- for unit testing my fav lib is jest and angular testing library, the reason its one of the best is, because its declarative in nature and any implementation changes would not break your UI tests.
