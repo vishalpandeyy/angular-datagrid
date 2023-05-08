@@ -1,15 +1,18 @@
 <mat-sidenav-container class="home">
   <mat-sidenav-content>
-    <div>
-      <mat-toolbar>
-        <span> Countries </span>
-      </mat-toolbar>
+    <mat-toolbar>
+      <span> Countries </span>
+    </mat-toolbar>
+    <div class="content">
+      
       <div class="filters" *ngIf="countries">
+    
         <div class="app-form">
-         
-            <input class="search" appearance="outline" placeholder="Search countries by name"  matInput (keyup)="filterChange({ columnProp: 'name'}, $event)">
-            <div *ngFor="let filter of filterSelectObj">
-              <ng-select [multiple]="false" [(ngModel)]="filter.modelValue" (change)="filterChange(filter, $event)">
+            <input class="search" appearance="outline" 
+            placeholder="Search countries by name"  
+            matInput (keyup)="filterChange({ columnProp: 'name'}, $event)">
+            <div *ngFor="let filter of filterSelectObj; let i = index">
+              <ng-select [multiple]="false" [(ngModel)]="filter.modelValue" (ngModelChange)="filterChange(filter, $event)">
                 <ng-option [value]="item" *ngFor="let item of filter.options(countries)">{{item}}</ng-option>
             </ng-select>
             </div>
@@ -18,9 +21,10 @@
       </div>
 
       <div class="panel">
-        <p *ngIf="dataSource">Showing <span *ngIf="dataSource.filteredData.length > 0">{{dataSource.filteredData.length}} out of</span> {{ resultsLength }} results 
-          <mat-icon (click)="ngAfterViewInit()" [ngClass]="{'refresh-icon': isLoadingResults, 'loading': isLoadingResults}" aria-hidden="false" aria-label="refresh" fontIcon="autorenew"></mat-icon>
+        <p *ngIf="dataSource">Showing <span *ngIf="dataSource.filteredData.length > 0"><b>{{dataSource.filteredData.length}}</b> out of</span> <b> {{ resultsLength }}</b> results 
         </p>
+        <mat-icon (click)="ngAfterViewInit()" [ngClass]="{'refresh-icon': isLoadingResults, 'loading': isLoadingResults}" aria-hidden="false" aria-label="refresh" fontIcon="autorenew"></mat-icon>
+
       </div>
 
       <div class="table-container mat-elevation-z8">
@@ -33,8 +37,7 @@
           matSortDisableClear
           matSortDirection="asc"
         >
-          <!--- Note that these columns can be defined in any order.
-                    The actual rendered columns are set as a property on the row definition" -->
+      
 
           <!-- Capital Column -->
           <ng-container matColumnDef="capital">
@@ -55,7 +58,7 @@
             <th mat-header-cell *matHeaderCellDef>Subregion</th>
             <td mat-cell *matCellDef="let row">
               <span>
-                <button class="pills" mat-stroked-button color="ocean"> {{ row.subregion }}</button>
+                <button class="pills" (click)="setFilter('subregion', row.subregion)" mat-stroked-button color="ocean"> {{ row.subregion }}</button>
               </span>
             </td>
           </ng-container>
@@ -65,7 +68,7 @@
             <th mat-header-cell *matHeaderCellDef>Currencies</th>
             <td mat-cell *matCellDef="let row">
               <span *ngFor="let currency of row.currencies">
-                <button class="pills"  mat-stroked-button color="ocean"> {{ currency.name }}</button>
+                <button class="pills" (click)="setFilter('currencies', currency.name)" mat-stroked-button color="ocean"> {{ currency.name }}</button>
               </span>
             </td>
           </ng-container>
@@ -75,7 +78,7 @@
             <th mat-header-cell *matHeaderCellDef>Languages</th>
             <td mat-cell *matCellDef="let row">
               <span *ngFor="let language of row.languages">
-                <button class="pills" mat-stroked-button color="ocean"> {{ language.name }}</button>
+                <button class="pills" (click)="setFilter('languages', language.name)"  mat-stroked-button color="ocean"> {{ language.name }}</button>
               </span>
             </td>
           </ng-container>
