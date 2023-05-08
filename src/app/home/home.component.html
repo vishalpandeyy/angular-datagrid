@@ -12,10 +12,9 @@
           </mat-form-field>
 
             <mat-form-field *ngFor="let filter of filterSelectObj" style="margin-left: 15px;">
-              <mat-label>Filter {{filter.name}}</mat-label>
+              <mat-label>{{filter.name}}</mat-label>
               <select matNativeControl name="{{filter.columnProp}}" [(ngModel)]="filter.modelValue"
                 (change)="filterChange(filter, $event)">
-                <option value="">-- Select {{filter.name}} --</option>
                 <option [value]="item" *ngFor="let item of filter.options(countries)">{{item}}</option>
               </select>
             </mat-form-field>
