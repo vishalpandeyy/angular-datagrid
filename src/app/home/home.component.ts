@@ -1,11 +1,9 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
-import { MatSort, SortDirection } from '@angular/material/sort';
-import { Observable, merge, of } from 'rxjs';
-import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 
 import { Country } from './country.model';
 import { HttpClient } from '@angular/common/http';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
@@ -22,7 +20,7 @@ export class HomeComponent implements AfterViewInit {
   resultsLength = 0;
   isLoadingResults = true;
   isRateLimitReached = false;
-  filterValues = {};
+  filterValues: any = {};
   filterSelectObj: any = [
     {
       name: 'Any Subregion',
@@ -90,19 +88,39 @@ export class HomeComponent implements AfterViewInit {
     this.dataSource.sort = this.sort;
     // If the user changes the sort order, reset back to the first page.
     this.sort!.sortChange.subscribe(() => (this.paginator!.pageIndex = 0));
-
-    // this.filterSelectObj.filter((o: { options: any[]; columnProp: string; subProp: string;}) => {
-    //     o.options = this.getFilterObject(this.countries, o.columnProp);
-    // });
   }
 
-  filterChange(filter: string, event: Event) {
-
+  filterChange(filter: { columnProp: string | number; }, event: any) {
+    this.filterValues[filter.columnProp] = event.target.value.trim().toLowerCase();
+  
+    this.dataSource.filterPredicate = (data: any) => {
+      for (const prop in this.filterValues) {
+        if (this.filterValues[prop] && data[prop]) {
+          if (Array.isArray(data[prop])) {
+            const subProp = this.filterSelectObj.find((o: { columnProp: string; }) => o.columnProp === prop)?.subProp;
+            const matches = data[prop].some((val: { [x: string]: string; }) => val[subProp].toLowerCase().includes(this.filterValues[prop]));
+            if (!matches) {
+              return false;
+            }
+          } else if (!data[prop].toLowerCase().includes(this.filterValues[prop])) {
+            return false;
+          }
+        }
+      }
+      return true;
+    };
+  
+    this.dataSource.filter = JSON.stringify(this.filterValues);
   }
 
-  resetFilters() {
-
+  resetFilters(): void {
+    this.filterValues = {}
+    this.filterSelectObj.forEach((value: { modelValue: undefined; }, key: any) => {
+      value.modelValue = undefined;
+    })
+    this.dataSource.filter = "";
   }
+
   applyFilter(event: Event, columnName: string) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -115,12 +133,6 @@ export class HomeComponent implements AfterViewInit {
     }
   }
 }
-
-
-
-// datasource
-// https://restcountries.com/v2/region/europe
-
 
 export class CountriesDatabase {
 
