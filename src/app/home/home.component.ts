@@ -10,17 +10,17 @@ import { MatTableDataSource } from '@angular/material/table';
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements AfterViewInit {
   displayedColumns = ['name', 'capital', 'subregion', 'currencies', 'languages'];
-  countriesDatabase: CountriesDatabase | undefined;
+  countriesDatabase: CountriesDatabase;
   dataSource: any;
   countries: Country[] = [];
   resultsLength = 0;
-  isLoadingResults = true;
+  isLoadingResults = false;
   isRateLimitReached = false;
   filterValues: any = {};
+  filterCount = 0;
   filterSelectObj: any = [
     {
       name: 'Any Subregion',
@@ -67,6 +67,7 @@ export class HomeComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   @ViewChild(MatSort) sort: MatSort | undefined;
   constructor(private _httpClient: HttpClient) {
+    this.countriesDatabase = new CountriesDatabase(this._httpClient);
 
   }
   getFilterObject(fullObj: any, columnProp: string, subProp?: string) {
@@ -81,17 +82,23 @@ export class HomeComponent implements AfterViewInit {
     return uniqChk;
   }
   async ngAfterViewInit() {
-    this.countriesDatabase = new CountriesDatabase(this._httpClient);
+    this.isLoadingResults = true;
     this.countries = await this.countriesDatabase.getCountries();
+    this.resultsLength = this.countries.length;
     this.dataSource = new MatTableDataSource(this.countries);
+    setTimeout(() => {
+      this.isLoadingResults = false;
+    }, 2000)
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     // If the user changes the sort order, reset back to the first page.
     this.sort!.sortChange.subscribe(() => (this.paginator!.pageIndex = 0));
+
+ 
   }
 
   filterChange(filter: { columnProp: string | number; }, event: any) {
-    this.filterValues[filter.columnProp] = event.target.value.trim().toLowerCase();
+    this.filterValues[filter.columnProp] = event.trim().toLowerCase();
   
     this.dataSource.filterPredicate = (data: any) => {
       for (const prop in this.filterValues) {
@@ -120,18 +127,6 @@ export class HomeComponent implements AfterViewInit {
     })
     this.dataSource.filter = "";
   }
-
-  applyFilter(event: Event, columnName: string) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (columnName === 'name') {
-      this.dataSource.filterPredicate = (data: Country, filter: string) => {
-        const name = data.name.toLowerCase();
-        return name.indexOf(filter) !== -1;
-      };
-    }
-  }
 }
 
 export class CountriesDatabase {
@@ -143,6 +138,4 @@ export class CountriesDatabase {
     const requestUrl = 'https://restcountries.com/v2/region/europe';
     return this._httpClient.get<Country[]>(requestUrl).toPromise();
   }
-
-
 }
