@@ -5,7 +5,7 @@ The only issue I faced was during setting up the project from angular-seed which
 ## Libraries used
 
 # Angular material 
-- Even though @ fiserv we use propriatry libs, angular material was the last lib I worked with and was very comfortable with it. Even if it meant to iron out the design element which were different than material's opinionated design. 
+- Angular material was the last lib I worked with and was very comfortable with it. Even if it meant to iron out the design element which were different than material's opinionated design. 
 
 - It has great documentation which helped me getting up to speed with setting with the grid with filtering and sorting example.
 
