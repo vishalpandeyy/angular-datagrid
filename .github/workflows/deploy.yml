@@ -34,4 +34,5 @@ jobs:
           git checkout -b gh-pages
           git add .
           git commit -m "Deploy to GitHub Pages"
-          git push -f origin gh-pages
+          git push -f "https://$ACCESS_TOKEN@github.com/vishalpandeyy/angular-datagrid.git" gh-pages
+
