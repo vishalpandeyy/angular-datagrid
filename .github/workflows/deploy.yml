@@ -14,15 +14,24 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 16
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --force --legacy-peer-deps
+        working-directory: ./
+
+      - name: Build Angular app
+        run: npm build
+        working-directory: ./
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          cd ./dist
+          git checkout -b gh-pages
+          git add .
+          git commit -m "Deploy to GitHub Pages"
+          git push -f origin gh-pages
