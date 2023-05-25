@@ -10,27 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Checkout 🛎️
+        uses: actions/checkout@master
         with:
-          node-version: 16
+          persist-credentials: false
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Get npm cache
+        id: npm-cache
+        run: echo "::set-output name=dir::$(npm cache dir)"
+
+      - uses: actions/cache@v1
         with:
-          node-version: 16
+          path: ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package.json') }} # TODO: Use yarn.lock instead, if that file exists in your repo.
+          restore-keys: |
+            ${{ runner.os }}-npm-
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install dependencies 🔧
+        run: npm install
 
-      - name: Build Angular app
-        run: npm run build --prod
+      - name: Build 🏗️
+        run: npm build
 
-      - name: Deploy to GitHub Pages
-        run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git checkout -b gh-pages
-          git add .
-          git commit -m "Deploy to GitHub Pages"
-          git push -f origin gh-pages
+      - name: Deploy to GH Pages 🚀
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist
