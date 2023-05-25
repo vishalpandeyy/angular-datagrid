@@ -11,17 +11,15 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          path: angular-datagrid
+        uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
           node-version: 16
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --force --legacy-peer-deps
         working-directory: ./angular-datagrid
 
       - name: Build Angular app
@@ -32,7 +30,7 @@ jobs:
         run: |
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          cd my-repo
+          cd angular-datagrid
           git checkout -b gh-pages
           git add .
           git commit -m "Deploy to GitHub Pages"
