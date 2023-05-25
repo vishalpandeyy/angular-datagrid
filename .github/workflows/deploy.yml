@@ -23,7 +23,7 @@ jobs:
         working-directory: ./
 
       - name: Build Angular app
-        run: npm build
+        run: npm run build --prod
         working-directory: ./
 
       - name: Deploy to GitHub Pages
